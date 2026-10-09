@@ -97,7 +97,7 @@ Si la instancia posee otro nombre, sustituya `.\SQLEXPRESS` por el nombre corres
 1. Clonar el repositorio:
 
    ```bash
-   git clone <URL-DEL-REPOSITORIO>
+   git clone https://github.com/juanignacio87/CattleCat.git
    ```
 
 2. Abrir la solución en Visual Studio.
