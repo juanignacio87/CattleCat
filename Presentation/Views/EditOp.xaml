@@ -1,0 +1,394 @@
+﻿<UserControl x:Class="Presentation.Views.EditOp"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Presentation.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="565" 
+             d:DesignWidth="925"
+             Background="Transparent">
+    <!--#region Contenido-->
+    <Border CornerRadius="10"
+            Background="#76d275">
+        <Grid Name="GridOperaciones"
+              Background="Transparent" 
+              RenderTransformOrigin="0.417,0.771">
+            <!--#region GRID DEFINITION-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="90"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="13"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="13"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="17"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="18"/>
+            </Grid.ColumnDefinitions>
+            <!--#endregion-->
+            <!--#region Titulo-->
+            <TextBlock Text="Editar Operaciones"
+                       Foreground="Black"
+                       FontSize="45"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Height="58"
+                       Margin="0,23,0,0"
+                       Grid.Column="2"
+                       Grid.ColumnSpan="5"
+                       Grid.Row="1"/>
+            <!--#endregion-->
+            <!--#region Establecimiento-->
+            <TextBlock Text="Establecimiento:"
+                       FontSize="25"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Height="45"
+                       Width="184"
+                       Grid.Column="1"
+                       Grid.Row="3"/>
+            <ComboBox x:Name="cbEstablecimiento"
+                      Height="45"
+                      Width="230"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      Cursor="Hand"
+                      Grid.Column="1"
+                      Grid.ColumnSpan="2"
+                      Grid.Row="5"
+                      DisplayMemberPath="NomEstablecimientos"
+                      SelectedValuePath="Id" 
+                      SelectionChanged="cbEstablecimiento_SelectionChanged"
+                      Style="{DynamicResource ComboBoxStyle1}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ComboBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                                    <Border CornerRadius="10"
+                            SnapsToDevicePixels="True"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted"
+                                 Value="True">
+                                            <Setter Property="Background" Value="Yellow"/>
+                                            <Setter Property="BorderBrush" Value="Green"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+            <!--#endregion-->
+            <!--#region Lote-->
+            <TextBlock Text="Lote:"
+                       FontSize="25"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Grid.Column="4"
+                       Grid.ColumnSpan="2"
+                       Grid.Row="3"
+                       Height="45"
+                       Width="60" 
+                       RenderTransformOrigin="0.71,1.031"/>
+            <ComboBox x:Name="cbLote" 
+                      IsEnabled="True"
+                      Height="45"
+                      Width="200"
+                      HorizontalAlignment="Left"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      Cursor="Hand"
+                      Grid.Column="4"
+                      Grid.ColumnSpan="2"
+                      Grid.Row="5"
+                      DisplayMemberPath="NomLotes"
+                      SelectedValuePath="Id"
+                      Style="{DynamicResource ComboBoxStyle1}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ComboBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                                    <Border CornerRadius="10"
+                            SnapsToDevicePixels="True"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted"
+                                 Value="True">
+                                            <Setter Property="Background" Value="Yellow"/>
+                                            <Setter Property="BorderBrush" Value="Green"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+            <!--#endregion-->
+            <!--#region Operacion-->
+            <TextBlock Text="Operaciones:"
+                       FontSize="25"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Height="46"
+                       Width="150"
+                       Grid.Column="1"
+                       Grid.Row="7"/>
+            <ComboBox x:Name="cbOperation"
+                      IsEnabled="True"
+                      Height="45"
+                      Width="230"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      Cursor="Hand"
+                      Grid.Column="1"
+                      Grid.ColumnSpan="2"
+                      Grid.Row="9"
+                      DisplayMemberPath="NomLotes"
+                      SelectedValuePath="Id"
+                      Style="{DynamicResource ComboBoxStyle1}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ComboBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                                    <Border CornerRadius="10"
+                            SnapsToDevicePixels="True"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted"
+                                 Value="True">
+                                            <Setter Property="Background" Value="Yellow"/>
+                                            <Setter Property="BorderBrush" Value="Green"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+            <!--#endregion-->
+            <!--#region Cantidad-->
+            <TextBlock Text="Cantidad:"
+                       FontSize="25"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Height="44"
+                       Width="112"
+                       Grid.Column="1"
+                       Grid.Row="11"/>
+            <TextBox Style="{DynamicResource TextBoxStyle1}"
+                     x:Name="tbCant"
+                     Height="45" 
+                     Width="200"
+                     HorizontalAlignment="Left"
+                     HorizontalContentAlignment="Center"
+                     VerticalContentAlignment="Center"
+                     FontSize="23"
+                     Grid.Column="3"
+                     Grid.ColumnSpan="2"
+                     Grid.Row="11"/>
+            <!--#endregion-->
+            <!--#region Categoria-->
+            <TextBlock Text="Categoría:"
+                       FontSize="25"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Grid.Column="6"
+                       Grid.ColumnSpan="2"
+                       Grid.Row="3"
+                       Height="41"
+                       Width="117" 
+                       RenderTransformOrigin="0.458,-3.481"/>
+            <ComboBox x:Name="cbCategoria" 
+                      IsEnabled="True"
+                      Height="45"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      Cursor="Hand"
+                      Grid.Column="6"
+                      Grid.ColumnSpan="2"
+                      Grid.Row="5"
+                      Style="{DynamicResource ComboBoxStyle1}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ComboBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                                    <Border CornerRadius="10"
+                            SnapsToDevicePixels="True"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted"
+                                 Value="True">
+                                            <Setter Property="Background" Value="Yellow"/>
+                                            <Setter Property="BorderBrush" Value="Green"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+            <!--#endregion-->
+            <!--#region BTN Agregar-->
+            <Button Style="{DynamicResource CRUDButtonStyle}"
+                    Height="45"
+                    Width="150"
+                    Content="Actualizar"
+                    FontSize="25"
+                    Foreground="White"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    x:Name="btnAdd" 
+                    Click="btnAdd_Click"
+                    Grid.Column="7"
+                    Grid.Row="11"/>
+            <!--#endregion-->
+            <!--#region BTN CANCELAR-->
+            <Button Style="{DynamicResource CRUDButtonStyle}"
+                    Height="45"
+                    Width="150"
+                    Content="Cancelar"
+                    FontSize="25"
+                    Foreground="White"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    HorizontalAlignment="Left"
+                    x:Name="btnCancelar" 
+                    Click="btnCancelar_Click"
+                    Grid.Column="5"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="11"
+                    Margin="0"/>
+            <!--#endregion-->
+            <!--#region Fecha-->
+            <Label Content="Fecha:"
+                   FontSize="25"
+                   Background="Transparent" 
+                   Grid.Column="7"
+                   
+                   Grid.Row="7"/>
+            <DatePicker Style="{DynamicResource DatePickerStyle}" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Top" 
+                        Height="48" 
+                        Width="254"
+                        FontSize="18"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        x:Name="dpDate"
+                        Grid.Column="5"
+                        Grid.ColumnSpan="3"
+                        Grid.Row="9"/>
+            <!--#endregion-->
+            <!--#region Nombre-->
+            <Label Content="Mi nombre es:"
+                   FontSize="25"
+                   Background="Transparent" 
+                   Grid.Column="4"
+                   Grid.ColumnSpan="2"
+                   Grid.Row="7"/>
+            <ComboBox x:Name="cbUsuario"
+                      Height="46"
+                      Width="250"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Left"
+                      Cursor="Hand" 
+                      IsReadOnly="True"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      DisplayMemberPath="Usuarios"
+                      SelectedValuePath="Id"
+                      Grid.Column="4"
+                      Grid.ColumnSpan="2"
+                      Grid.Row="9"
+                      Style="{DynamicResource ComboBoxStyle1}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ComboBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                                    <Border CornerRadius="10"
+                            SnapsToDevicePixels="True"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted"
+                                 Value="True">
+                                            <Setter Property="Background" Value="Yellow"/>
+                                            <Setter Property="BorderBrush" Value="Green"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+            <!--#endregion-->
+        </Grid>
+    </Border>
+    <!--#endregion-->
+</UserControl>

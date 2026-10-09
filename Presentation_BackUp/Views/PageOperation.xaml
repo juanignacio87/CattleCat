@@ -1,0 +1,279 @@
+﻿<Page x:Class="Presentation.Views.PageOperation"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Presentation.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="565" d:DesignWidth="925"
+      Title="PageOperation"
+      Background="Transparent">
+
+    <!--#region Contenido-->
+    <Border CornerRadius="10"
+            Background="#76d275">
+        <Grid Name="GridOperaciones"
+              Background="Transparent" RenderTransformOrigin="0.417,0.771">
+
+            <!--#region Titulo-->
+            <TextBlock Text="Operaciones"
+                       Foreground="Black"
+                       FontSize="45"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Height="58"
+                       Width="256" Margin="0,23,0,0"/>
+            <!--#endregion-->
+            <!--#region Establecimiento-->
+            <TextBlock Text="Establecimiento:"
+                       FontSize="25"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Margin="0,106,685,0"
+                       Height="45"
+                       Width="184"/>
+            <ComboBox x:Name="cbEstablecimiento"
+                      Height="45"
+                      Margin="258,106,463,414"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      Cursor="Hand"
+                      DisplayMemberPath="NomEstablecimientos"
+                      SelectedValuePath="Id" 
+                      />
+            <!--#endregion-->
+            <!--#region Lote-->
+            <TextBlock Text="Lote:"
+                       FontSize="25"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Margin="0,106,254,0"
+                       Height="45"
+                       Width="60" 
+                       RenderTransformOrigin="0.71,1.031"/>
+            <ComboBox x:Name="cbLote" 
+                      IsEnabled="False"
+                      Height="45" 
+                      Margin="671,106,31,414"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      Cursor="Hand"
+                      DisplayMemberPath="NomLotes"
+                      SelectedValuePath="Id"/>
+            <!--#endregion-->
+            <!--#region Operacion-->
+            <TextBlock Text="Operaciones:"
+                       FontSize="25"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Margin="0,208,728,0" 
+                       Height="45"
+                       Width="150"/>
+            <ListBox Style="{DynamicResource ListBoxStyleOperations}" 
+                     x:Name="lboxOperaciones" 
+                     Margin="42,253,382,0" 
+                     Height="280" 
+                     VerticalAlignment="Top"
+                     VerticalContentAlignment="Center"
+                     Cursor="Hand"
+                     FontSize="25"
+                     SelectionMode="Multiple"
+                     Background="Transparent">
+                <Grid Cursor="Hand"
+                      Background="Transparent">
+                    
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="240"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <CheckBox Content="Aftosa"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="0"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbAftosa"/>
+                    <CheckBox Content="Antiparasitario"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="1"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbAntipa"/>
+                    <CheckBox Content="Brucelosis"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="2"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbBrucelosis"/>
+                    <CheckBox Content="Castración"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="3"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbCastra"/>
+                    <CheckBox Content="Conteo"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="4"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbConteo"/>
+                    <CheckBox Content="Destete"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="5"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbDestete"/>
+                    <CheckBox Content="Ecografía"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="6"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbEcografia"/>
+                    <CheckBox Content="Entrada"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="0"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbEntrada"/>
+                    <CheckBox Content="Inseminación"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="1"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbInseminacion"/>
+                    <CheckBox Content="IR9"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="2"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbIR9"/>
+                    <CheckBox Content="Muerte"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="3"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbMuerte"/>
+                    <CheckBox Content="Nacimiento"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="4"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbNacimiento"/>
+                    <CheckBox Content="Reproductiva"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="5"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbReproductiva"/>
+                    <CheckBox Content="Salida"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="1" 
+                              Grid.Row="6"
+                              Margin="0,3"
+                              VerticalContentAlignment="Center"
+                              x:Name="chbSalida"/>
+                </Grid>
+            </ListBox>
+            <!--#endregion-->
+            <!--#region Cantidad-->
+            <TextBlock Text="Cantidad:"
+                       FontSize="25"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Margin="0,412,202,0"
+                       Height="44"
+                       Width="112"/>
+            <TextBox Style="{DynamicResource TextBoxStyle1}"
+                     x:Name="tbCant"
+                     Height="45" 
+                     Margin="723,407,31,113"
+                     HorizontalContentAlignment="Right"
+                     FontSize="23"/>
+            <!--#endregion-->
+            <!--#region Categoria-->
+            <TextBlock Text="Categoria:"
+                       FontSize="25"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Margin="0,181,254,0"
+                       Height="41"
+                       Width="117" 
+                       RenderTransformOrigin="0.458,-3.481"/>
+            <ComboBox x:Name="cbCategoria" 
+                      IsEnabled="True"
+                      Height="45" 
+                      Margin="671,177,31,343"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      Cursor="Hand"
+                      />
+            <!--#endregion-->
+            <!--#region BTN Agregar-->
+            <Button Style="{DynamicResource CRUDButtonStyle}"
+                    Margin="731,488,39,32"
+                    Height="45"
+                    Width="150"
+                    Content="Agregar"
+                    FontSize="25"
+                    Foreground="White"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    x:Name="btnAdd"/>
+            <!--#endregion-->
+            <!--#region Fecha-->
+            <DatePicker Style="{DynamicResource DatePickerStyle}" 
+                        HorizontalAlignment="Left" 
+                        Margin="671,242,0,0" 
+                        VerticalAlignment="Top" 
+                        Height="48" 
+                        Width="214"
+                        FontSize="18"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        x:Name="DPFecha"/>
+            <!--#endregion-->
+            <!--#region Nombre-->
+            <Label Content="Mi nombre es:"
+                   FontSize="20"
+                   FontWeight="DemiBold"
+                   Background="Transparent" 
+                   Margin="558,324,222,205"/>
+            <ComboBox x:Name="cbUsuario"
+                      Height="46"
+                      VerticalAlignment="Top"
+                      Margin="708,319,31,0"
+                      Cursor="Hand" 
+                      IsReadOnly="True"
+                      VerticalContentAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      FontSize="18"
+                      DisplayMemberPath="Usuarios"
+                      SelectedValuePath="Id"/>
+            <!--#endregion-->
+        </Grid>
+    </Border>
+    <!--#endregion-->
+</Page>

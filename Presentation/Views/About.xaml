@@ -1,0 +1,75 @@
+﻿<Window x:Class="Presentation.Views.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Presentation.Views"
+        mc:Ignorable="d"
+        Title="About" 
+        Height="450" 
+        Width="400" 
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        MouseDoubleClick="Window_MouseDown"
+        AllowsTransparency="True"
+        MouseDown="Window_MouseDown">
+    <Border CornerRadius="25"
+        Background="Green">
+        <Grid Background="Transparent">
+            <!--#region GRID DEFINITION-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="32"/>
+                <ColumnDefinition Width="15"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="37"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition />
+                <RowDefinition Height="15"/>
+            </Grid.RowDefinitions>
+            <!--#endregion-->
+            <!--#region BUTTON CLOSE-->
+            <Button Grid.Row="1" 
+                Grid.Column="2"
+                Click="Button_Click"
+                Background="Transparent" 
+                Height="NaN"
+                Width="30"
+                Style="{DynamicResource ButtonHeaderStyle}" HorizontalAlignment="Center" Margin="0,0,0,32" Grid.RowSpan="3">
+                <Image Source="/SCS/IMG/close.png"/>
+            </Button>
+            <!--#endregion-->
+            <Label Grid.Row="3" 
+               Grid.Column="1"
+               Content="Acerca de : " 
+               HorizontalAlignment="Center" 
+               VerticalContentAlignment="Top" 
+               FontSize="20" 
+               FontWeight="Bold"
+               Foreground="White"/>
+            <!--#region TEXT-->
+            <TextBox Grid.Row="5"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Foreground="AntiqueWhite"
+                 TextWrapping="Wrap"
+                 Background="Transparent"
+                 AcceptsReturn="True"
+                 FontSize="18"
+                 IsReadOnly="True"
+                 Style="{DynamicResource TextBoxStyle1}"
+                 VerticalScrollBarVisibility="Auto"
+                 BorderBrush="Transparent"
+                 x:Name="txt">
+
+            </TextBox>
+            <!--#endregion-->
+        </Grid>
+    </Border>
+</Window>
