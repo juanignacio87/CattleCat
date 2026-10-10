@@ -25,13 +25,19 @@ namespace Presentation.Views
         public Help()
         {
             InitializeComponent();
-            txt.Text = "Para crear un registro exitoso, debe seguir el siguiente procedimiento:\n\n1 - Elegir un Establecimiento en el combobox que se sitúa arriba a la izquierda. Esto habilitará un segundo combobox para elegir el lote de este establecimiento.\n\n2 - Una vez elegidos tanto el lote como establecimiento, debe elegir la categoría del ganado.\n\n3 - Para seleccionar las operaciones se debe clickear sobre el o los cuadrados seleccionados. Puede seleccionar más de uno a la vez, siempre teniendo en cuenta la compatibilidad entre las operaciones, como por ejemplo, no se pueden asignar 'Nacimiento' y 'Muerte' en un mismo registro, así como tampoco 'Entrada' y 'Salida', y también las compatibilidades entre 'Operaciones' y 'Categorías' como podrían ser 'Inseminación' en 'Toros', 'Novillos' 'terneros', por citar ejemplos. Esto hará que no se genere el registro.\n\n4 - Al seleccionar la fecha recuerde que nunca podrá ser una fecha futura.\n\n5 - Seleccione su nombre. \n\n6 - Agregue una cantidad numérica para representar los animales que han sido expuestos a dichas operaciones.\n\n7 - Presione el botón agregar.\n\n8 - Finalizado este proceso un cartel le indicará si el registro tuvo éxito o si hubo un error.\n\n9 - En caso de error deberá repetir el procedimiento.";
+            txt.Text = "Para crear un registro exitoso, debe seguir el siguiente procedimiento:\n\n" +
+                   "1 - Elegir un establecimiento.\n\n" +
+                   "2 - Elegir el lote correspondiente.\n\n" +
+                   "3 - Seleccionar la categoría y las operaciones compatibles.\n\n" +
+                   "4 - Seleccionar una fecha que no sea futura.\n\n" +
+                   "5 - Seleccionar el usuario.\n\n" +
+                   "6 - Ingresar la cantidad de animales.\n\n" +
+                   "7 - Presionar el botón Agregar.\n\n" +
+                   "8 - Verificar el mensaje con el resultado de la operación.";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            UCOperation operation = new UCOperation();
-            operation.btnHelp.IsEnabled = true;
             this.Close();
         }
 

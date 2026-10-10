@@ -148,3 +148,34 @@ Técnico en Agronegocios y desarrollador C#/.NET, orientado a soluciones AgTech 
 ## Licencia
 
 Este proyecto se presenta con fines educativos y de portfolio. La incorporación de una licencia de uso queda pendiente antes de su distribución pública.
+
+
+## Capturas de pantalla
+
+### Inicio
+
+![Pantalla de inicio de CattleCat](docs/screenshots/01-inicio.png)
+
+### Registro de operaciones
+
+![Registro de operaciones ganaderas](docs/screenshots/02-operaciones.png)
+
+### Consulta de stock
+
+![Stock ganadero filtrado por establecimiento y lote](docs/screenshots/03-rodeo.png)
+
+### Historial de operaciones
+
+![Grilla con el historial de operaciones](docs/screenshots/04-grilla.png)
+
+### Establecimientos y lotes
+
+![Administración de establecimientos y lotes](docs/screenshots/05-establecimientos.png)
+
+### Usuarios
+
+![Administración de usuarios](docs/screenshots/06-usuarios.png)
+
+### Validación de stock
+
+![Advertencia al intentar realizar una operación sin stock](docs/screenshots/07-validacion-stock.png)

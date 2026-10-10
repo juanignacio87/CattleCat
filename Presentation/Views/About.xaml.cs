@@ -23,8 +23,8 @@ namespace Presentation.Views
         {
             InitializeComponent();
             txt.Text = "Este software fue desarrollado por Juan Ignacio.\n\n" +
-                       "El objetivo principal es facilitar el registro y seguimiento de rodeos bovinos en los establecimientos ganaderos, permitiendo una gestión más eficiente y organizada.\n\n" +
-                       "Para cualquier consulta o sugerencia, puede ponerse en contacto por correo electrónico con juanbastonero@gmail.com";
+                       "Su objetivo es facilitar el registro y seguimiento de rodeos bovinos, establecimientos, lotes y operaciones ganaderas.\n\n" +
+                       "Código fuente y documentación: \n\ngithub.com/juanignacio87/CattleCat";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

@@ -38,13 +38,21 @@ namespace Presentation.Views
 
         private void btnHelp_Click(object sender, RoutedEventArgs e)
         {
-            Help help = new Help();
-            if (!help.IsActive)
-            {
-                help.Show();
-            }
-            else { return; }
             btnHelp.IsEnabled = false;
+
+            try
+            {
+                Help helpWindow = new Help
+                {
+                    Owner = Window.GetWindow(this)
+                };
+
+                helpWindow.ShowDialog();
+            }
+            finally
+            {
+                btnHelp.IsEnabled = true;
+            }
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)

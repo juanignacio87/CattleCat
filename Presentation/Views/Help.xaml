@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:Presentation.Views"
         mc:Ignorable="d"
         Title="Help" 
-        Height="620" 
-        Width="400" 
+        Height="560" 
+        Width="800" 
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
@@ -53,7 +53,8 @@
                    VerticalContentAlignment="Top" 
                    FontSize="20" 
                    FontWeight="Bold"
-                   Foreground="White" Width="70"/>
+                   Foreground="White" 
+                   Width="70"/>
             <!--#region TEXT-->
             <TextBox Grid.Row="5"
                      Grid.Column="1"

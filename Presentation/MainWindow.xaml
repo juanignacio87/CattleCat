@@ -44,7 +44,7 @@
                         <ColumnDefinition Width="100"/>
                     </Grid.ColumnDefinitions>
                     <!--#region Title-->
-                    <TextBlock Text="Sistema Ganadero"
+                    <TextBlock Text="CattleCat"
                                FontSize="25"
                                Grid.Column="0"
                                Foreground="Black"
@@ -185,7 +185,7 @@
                     <!-- Título -->
                     <StackPanel Grid.Row="1"
                                 Margin="0,15,0,0">
-                        <TextBlock Text="Cattle Control"
+                        <TextBlock Text="CattleCat"
                                    Foreground="#1B5E20"
                                    FontSize="48"
                                    FontWeight="SemiBold"
@@ -298,12 +298,12 @@
 
                     <!-- Indicación inferior -->
                     <TextBlock Grid.Row="6"
-               Text="Seleccioná una sección desde el menú lateral para comenzar."
-               Foreground="#2E7D32"
-               FontSize="16"
-               FontStyle="Italic"
-               TextAlignment="Center"
-               HorizontalAlignment="Center"/>
+                               Text="Seleccioná una sección desde el menú lateral para comenzar."
+                               Foreground="#2E7D32"
+                               FontSize="16"
+                               FontStyle="Italic"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Center"/>
                 </Grid>
                 <!--#endregion-->
 
