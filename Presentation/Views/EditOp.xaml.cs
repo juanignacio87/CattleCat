@@ -1,4 +1,6 @@
-﻿using Entities;
+﻿using CattleCat.Compatibility;
+using CattleCat.Domain.Stock;
+using Entities;
 using Logic;
 using System;
 using System.Collections;
@@ -289,11 +291,6 @@ namespace Presentation.Views
 
             var selectedLot = cbLote.SelectedItem as Entities.Lot;
 
-            int operationId = selectedOperation.Id;
-            int categoryId = selectedCategory.Id;
-            DateTime fecha = dpDate.SelectedDate.Value;
-
-
             if (selectedLot == null)
             {
                 MessageBox.Show("Debe seleccionar un lote.", "Advertencia!");
@@ -336,6 +333,10 @@ namespace Presentation.Views
                 return false;
             }
 
+            int operationId = selectedOperation.Id;
+            int categoryId = selectedCategory.Id;
+            DateTime fecha = dpDate.SelectedDate.Value;
+
             // Brucelosis: Toros, Vacas Cría y Vaquillonas Cría.
             if (operationId == 3 && categoryId != 3 && categoryId != 4 && categoryId != 5)
             {
@@ -361,7 +362,7 @@ namespace Presentation.Views
             }
 
             // Nacimiento: Terneros.
-            if (operationId == 12 && categoryId != 2)
+            if (operationId == LegacyStockOperationCatalog.Birth && categoryId != 2)
             {
                 MessageBox.Show("La operación de Nacimiento solo puede aplicarse a terneros.", "Advertencia!");
 
@@ -389,13 +390,11 @@ namespace Presentation.Views
              */
             int stockSinRegistro = l_Record.GetStock(selectedLot.Id, selectedCategory.Id, fecha, rec.Id);
 
-            int efectoNuevo = 0;
+            int efectoNuevo = LegacyStockOperationCatalog.SignedQuantity(operationId, cantidad);
 
-            bool isPositiveMovement = operationId == 8 ||   // Entrada
-                                      operationId == 12;    // Nacimiento
+            bool isPositiveMovement = LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Positive;
 
-            bool isNegativeMovement = operationId == 14 ||  // Salida
-                                      operationId == 11;    // Muerte
+            bool isNegativeMovement = LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Negative;
 
             bool isCount = operationId == 5;     // Conteo
 
@@ -424,18 +423,6 @@ namespace Presentation.Views
                     MessageBoxImage.Warning);
 
                 return false;
-            }
-
-            // Entrada o Nacimiento.
-            if (operationId == 8 || operationId == 12)
-            {
-                efectoNuevo = cantidad;
-            }
-
-            // Salida o Muerte.
-            if (operationId == 14 || operationId == 11)
-            {
-                efectoNuevo = -cantidad;
             }
 
             int stockProyectado = stockSinRegistro + efectoNuevo;

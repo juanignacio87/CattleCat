@@ -1,4 +1,6 @@
-﻿using Entities;
+﻿using CattleCat.Compatibility;
+using CattleCat.Domain.Stock;
+using Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -212,13 +214,13 @@ namespace Presentation.Views
         public const int const_conteo = 5;
         public const int const_destete = 6;
         public const int const_ecografia = 7;
-        public const int const_entrada = 8;
+        public const int const_entrada = LegacyStockOperationCatalog.Entry;
         public const int const_inseminacion = 9;
         public const int const_ir9 = 10;
-        public const int const_muerte = 11;
-        public const int const_nacimiento = 12;
+        public const int const_muerte = LegacyStockOperationCatalog.Death;
+        public const int const_nacimiento = LegacyStockOperationCatalog.Birth;
         public const int const_reproductiva = 13;
-        public const int const_salida = 14;
+        public const int const_salida = LegacyStockOperationCatalog.Exit;
         public const int const_querato = 15;
         public const int const_sarna = 16;
         public const int const_diarreico = 17;
@@ -481,16 +483,16 @@ namespace Presentation.Views
             int stockActual = recordLogic.GetStock(selectedLot.Id, selectedCategory.Id, dpDate.SelectedDate.Value);
 
             // Cantidad de movimientos seleccionados que suman stock.
-            int movimientosPositivos = checkBoxes.Count(operationId => operationId == const_entrada || operationId == const_nacimiento);
+            int movimientosPositivos = checkBoxes.Count(operationId => LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Positive);
 
             // Cantidad de movimientos seleccionados que restan stock.
-            int movimientosNegativos = checkBoxes.Count(operationId => operationId == const_salida || operationId == const_muerte);
+            int movimientosNegativos = checkBoxes.Count(operationId => LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Negative);
 
             /*
              * Las operaciones que no son movimientos ni conteos
              * requieren animales existentes en el lote y categoría.
              */
-            bool hasLivestockOperation = checkBoxes.Any(operationId => operationId != const_entrada && operationId != const_nacimiento && operationId != const_salida && operationId != const_muerte && operationId != const_conteo);
+            bool hasLivestockOperation = checkBoxes.Any(operationId => LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Neutral && operationId != const_conteo);
 
             /*
              * Si en el mismo registro existe una entrada o nacimiento,

@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using CattleCat.Compatibility;
+using Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -141,14 +142,14 @@ namespace Dalc
                                         r.Activo == 1 &&
                                         r.LotId == lotId &&
                                         (
-                                            r.OperationId == 8 ||
-                                            r.OperationId == 12 ||
-                                            r.OperationId == 14 ||
-                                            r.OperationId == 11
+                                            r.OperationId == LegacyStockOperationCatalog.Entry ||
+                                            r.OperationId == LegacyStockOperationCatalog.Birth ||
+                                            r.OperationId == LegacyStockOperationCatalog.Exit ||
+                                            r.OperationId == LegacyStockOperationCatalog.Death
                                         ))
                                     .Select(r =>
-                                        r.OperationId == 8 ||
-                                        r.OperationId == 12
+                                        r.OperationId == LegacyStockOperationCatalog.Entry ||
+                                        r.OperationId == LegacyStockOperationCatalog.Birth
                                             ? r.Total
                                             : -r.Total)
                                     .DefaultIfEmpty(0)

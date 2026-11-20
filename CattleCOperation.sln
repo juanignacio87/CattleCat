@@ -13,12 +13,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneInterface", "PhoneInte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{BCFF7E62-032B-43FC-AE7F-D57C39A980E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CattleCat.Domain", "CattleCat.Domain\CattleCat.Domain.csproj", "{F255820A-3EDD-4F63-9DB8-D5B0991B1C11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CattleCat.Domain.Tests", "CattleCat.Domain.Tests\CattleCat.Domain.Tests.csproj", "{894B7305-5D84-4DF1-B258-15CE7D65B922}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F255820A-3EDD-4F63-9DB8-D5B0991B1C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F255820A-3EDD-4F63-9DB8-D5B0991B1C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F255820A-3EDD-4F63-9DB8-D5B0991B1C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F255820A-3EDD-4F63-9DB8-D5B0991B1C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{894B7305-5D84-4DF1-B258-15CE7D65B922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894B7305-5D84-4DF1-B258-15CE7D65B922}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894B7305-5D84-4DF1-B258-15CE7D65B922}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894B7305-5D84-4DF1-B258-15CE7D65B922}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2745BE73-A4F5-4D0A-8B38-814A040DA311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2745BE73-A4F5-4D0A-8B38-814A040DA311}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2745BE73-A4F5-4D0A-8B38-814A040DA311}.Release|Any CPU.ActiveCfg = Release|Any CPU

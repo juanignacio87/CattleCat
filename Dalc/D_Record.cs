@@ -1,4 +1,6 @@
-﻿using Entities;
+﻿using CattleCat.Compatibility;
+using CattleCat.Domain.Stock;
+using Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -116,102 +118,38 @@ namespace Dalc
             return db.Records.FirstOrDefault(r => r.Id == id && r.Activo == 1);
         }
 
-        private static int GetStockEffect(int operationId, int quantity)
-        {
-            if (operationId == 8 || operationId == 12)
-            {
-                // Entrada o Nacimiento.
-                return quantity;
-            }
-
-            if (operationId == 14 || operationId == 11)
-            {
-                // Salida o Muerte.
-                return -quantity;
-            }
-
-            return 0;
-        }
-
         public (bool isValid, DateTime? conflictDate, int projectedStock) ValidateStockTimeline(int lotId, int categoryId, DateTime newDate, int newEffect, int? excludedRecordId = null)
         {
             Entities.Record originalRecord = null;
-
             if (excludedRecordId.HasValue)
-            {
-                originalRecord = db.Records.FirstOrDefault(r =>
-                    r.Id == excludedRecordId.Value &&
-                    r.Activo == 1);
-            }
+                originalRecord = db.Records.FirstOrDefault(r => r.Id == excludedRecordId.Value && r.Activo == 1);
 
-            bool removesMovementFromThisGroup = originalRecord != null && originalRecord.LotId == lotId && originalRecord.CategoryId == categoryId && GetStockEffect(originalRecord.OperationId, originalRecord.Total) != 0;
+            bool removesMovementFromThisGroup = originalRecord != null &&
+                originalRecord.LotId == lotId && originalRecord.CategoryId == categoryId &&
+                LegacyStockOperationCatalog.SignedQuantity(originalRecord.OperationId, originalRecord.Total) != 0;
 
-            /*
-             * Si el nuevo registro no modifica stock y tampoco
-             * estamos retirando un movimiento anterior de este
-             * lote/categoría, la cronología no cambia.
-             */
+            // Preserve the existing no-change shortcut, including its zero projected balance.
             if (newEffect == 0 && !removesMovementFromThisGroup)
-            {
                 return (true, null, 0);
-            }
 
-            var query = db.Records.Where(r =>
-                r.Activo == 1 &&
-                r.LotId == lotId &&
-                r.CategoryId == categoryId &&
-                (
-                    r.OperationId == 8 ||
-                    r.OperationId == 12 ||
-                    r.OperationId == 14 ||
-                    r.OperationId == 11
-                ));
-
+            int[] movementIds = LegacyStockOperationCatalog.GetMovementIds();
+            var query = db.Records.Where(r => r.Activo == 1 && r.LotId == lotId &&
+                r.CategoryId == categoryId && movementIds.Contains(r.OperationId));
             if (excludedRecordId.HasValue)
-            {
-                query = query.Where(r =>
-                    r.Id != excludedRecordId.Value);
-            }
+                query = query.Where(r => r.Id != excludedRecordId.Value);
 
-            var movements = query.Select(r => new
-                {
-                    r.Date,
-                    r.OperationId,
-                    r.Total
-                }).ToList();
+            var movements = query.Select(r => new { r.Date, r.Total, r.OperationId }).ToList()
+                .Select(r => new StockMovement(r.Date, r.Total, true,
+                    LegacyStockOperationCatalog.Classify(r.OperationId))).ToList();
 
-            var dailyEffects = movements
-                .GroupBy(r => r.Date.Date)
-                .ToDictionary(group => group.Key,
-                            group => group.Sum(r =>
-                             GetStockEffect(
-                                    r.OperationId,
-                                    r.Total)));
+            // newEffect already contains the net effect of a multi-operation submission.
+            // Zero needs no movement: omitting a zero day cannot change the running balance.
+            if (newEffect != 0)
+                movements.Add(new StockMovement(newDate, Math.Abs(newEffect), true,
+                    newEffect > 0 ? StockEffect.Positive : StockEffect.Negative));
 
-            DateTime candidateDate = newDate.Date;
-
-            if (dailyEffects.ContainsKey(candidateDate))
-            {
-                dailyEffects[candidateDate] += newEffect;
-            }
-            else
-            {
-                dailyEffects[candidateDate] = newEffect;
-            }
-
-            int stock = 0;
-
-            foreach (var day in dailyEffects.OrderBy(d => d.Key))
-            {
-                stock += day.Value;
-
-                if (stock < 0)
-                {
-                    return (false, day.Key, stock);
-                }
-            }
-
-            return (true, null, stock);
+            var result = StockTimeline.Evaluate(movements);
+            return (result.IsValid, result.ConflictDate, result.ProjectedStock);
         }
 
         public int GetStock(int lotId, int categoryId, DateTime untilDate, int? excludedRecordId = null)
@@ -226,15 +164,11 @@ namespace Dalc
                     r.Id != excludedRecordId.Value);
             }
 
-            var records = query.Where(r => r.OperationId == 8 ||   // Entrada
-                                      r.OperationId == 12 ||  // Nacimiento
-                                      r.OperationId == 14 ||  // Salida
-                                      r.OperationId == 11)    // Muerte
-                .ToList();
+            int[] movementIds = LegacyStockOperationCatalog.GetMovementIds();
+            var records = query.Where(r => movementIds.Contains(r.OperationId)).ToList();
 
-            int entradas = records.Where(r => r.OperationId == 8 || r.OperationId == 12).Sum(r => r.Total);
-
-            int salidas = records.Where(r => r.OperationId == 14 || r.OperationId == 11).Sum(r => r.Total);
+            int entradas = records.Where(r => LegacyStockOperationCatalog.Classify(r.OperationId) == StockEffect.Positive).Sum(r => r.Total);
+            int salidas = records.Where(r => LegacyStockOperationCatalog.Classify(r.OperationId) == StockEffect.Negative).Sum(r => r.Total);
 
             return entradas - salidas;
         }
@@ -320,10 +254,9 @@ namespace Dalc
 
             var records = query.ToList();
 
-            int[] sumOps = { 8, 12 };
-            int[] subOps = { 14, 11 };
 
-            var categories = records.GroupBy(r => r.CategoryId).ToDictionary(group => group.Key, group =>group.Where(r => sumOps.Contains(r.OperationId)).Sum(r => r.Total) - group.Where(r => subOps.Contains(r.OperationId)).Sum(r => r.Total));
+
+            var categories = records.GroupBy(r => r.CategoryId).ToDictionary(group => group.Key, group =>group.Where(r => LegacyStockOperationCatalog.Classify(r.OperationId) == StockEffect.Positive).Sum(r => r.Total) - group.Where(r => LegacyStockOperationCatalog.Classify(r.OperationId) == StockEffect.Negative).Sum(r => r.Total));
 
             int totalGral = categories.Values.Sum();
 
@@ -339,62 +272,20 @@ namespace Dalc
                 return (false, null, 0);
             }
 
-            /*
-             * Eliminar una Salida o Muerte aumenta el stock.
-             * Eliminar un tratamiento o Conteo no lo modifica.
-             *
-             * Solamente Entrada y Nacimiento pueden provocar
-             * un saldo negativo al desaparecer.
-             */
-            bool addsStock = record.OperationId == 8 ||   // Entrada
-                             record.OperationId == 12;    // Nacimiento
-
-            if (!addsStock)
-            {
+            // Removing a negative or neutral operation cannot reduce stock.
+            if (LegacyStockOperationCatalog.Classify(record.OperationId) != StockEffect.Positive)
                 return (true, null, 0);
-            }
 
-            var movements = db.Records.Where(r => r.Activo == 1 &&
-                                                r.Id != recordId &&
-                                                r.LotId == record.LotId &&
-                                                r.CategoryId == record.CategoryId &&
-                                                (
-                                                    r.OperationId == 8 ||   // Entrada
-                                                    r.OperationId == 12 ||  // Nacimiento
-                                                    r.OperationId == 14 ||  // Salida
-                                                    r.OperationId == 11     // Muerte
-                                                )).Select(r => new
-                                                    {
-                                                        r.Date,
-                                                        r.OperationId,
-                                                        r.Total
-                                                    }).ToList().GroupBy(r => r.Date.Date).OrderBy(group => group.Key);
+            int[] movementIds = LegacyStockOperationCatalog.GetMovementIds();
+            var movements = db.Records.Where(r => r.Activo == 1 && r.Id != recordId &&
+                r.LotId == record.LotId && r.CategoryId == record.CategoryId &&
+                movementIds.Contains(r.OperationId))
+                .Select(r => new { r.Date, r.Total, r.OperationId }).ToList()
+                .Select(r => new StockMovement(r.Date, r.Total, true,
+                    LegacyStockOperationCatalog.Classify(r.OperationId)));
 
-            int stock = 0;
-
-            foreach (var day in movements)
-            {
-                int dailyIncome = day
-                    .Where(r =>
-                        r.OperationId == 8 ||
-                        r.OperationId == 12)
-                    .Sum(r => r.Total);
-
-                int dailyOutcome = day
-                    .Where(r =>
-                        r.OperationId == 14 ||
-                        r.OperationId == 11)
-                    .Sum(r => r.Total);
-
-                stock += dailyIncome - dailyOutcome;
-
-                if (stock < 0)
-                {
-                    return (false, day.Key, stock);
-                }
-            }
-
-            return (true, null, stock);
+            var result = StockTimeline.Evaluate(movements);
+            return (result.IsValid, result.ConflictDate, result.ProjectedStock);
         }
 
         public (int totalStock, int farms, int lots, int activeRecords, string lastRecord)GetDashboardSummary()
