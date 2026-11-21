@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{A764D5A1-6177-40D6-BC56-CC6705714F8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneInterface", "PhoneInterface\PhoneInterface.csproj", "{7113C591-460E-4E16-A438-827F1767C889}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{BCFF7E62-032B-43FC-AE7F-D57C39A980E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CattleCat.Domain", "CattleCat.Domain\CattleCat.Domain.csproj", "{F255820A-3EDD-4F63-9DB8-D5B0991B1C11}"
@@ -49,10 +47,6 @@ Global
 		{A764D5A1-6177-40D6-BC56-CC6705714F8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A764D5A1-6177-40D6-BC56-CC6705714F8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A764D5A1-6177-40D6-BC56-CC6705714F8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7113C591-460E-4E16-A438-827F1767C889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7113C591-460E-4E16-A438-827F1767C889}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7113C591-460E-4E16-A438-827F1767C889}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7113C591-460E-4E16-A438-827F1767C889}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCFF7E62-032B-43FC-AE7F-D57C39A980E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCFF7E62-032B-43FC-AE7F-D57C39A980E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFF7E62-032B-43FC-AE7F-D57C39A980E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
