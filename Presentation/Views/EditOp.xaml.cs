@@ -147,15 +147,23 @@ namespace Presentation.Views
                 var lot = cbLote.SelectedItem;
                 var ope = cbOperation.SelectedItem;
 
-                rec.Date = (DateTime)dpDate.SelectedDate;
-                rec.UserId = (int)user.GetType().GetProperty("Id").GetValue(user);
-                rec.CategoryId = (int)category.GetType().GetProperty("Id").GetValue(category);
-                rec.LotId = (int)lot.GetType().GetProperty("Id").GetValue(lot);
-                rec.OperationId = (int)ope.GetType().GetProperty("Id").GetValue(ope);
-                rec.Total = int.Parse(tbCant.Text);
-
-                Logic.L_Record l_Record = new Logic.L_Record();
-                l_Record.Update(rec);
+                // Keep the loaded original untouched when the definitive write is rejected.
+                var candidate = new Entities.Record
+                {
+                    Id = rec.Id,
+                    Date = dpDate.SelectedDate.Value,
+                    UserId = (int)user.GetType().GetProperty("Id").GetValue(user),
+                    CategoryId = (int)category.GetType().GetProperty("Id").GetValue(category),
+                    LotId = (int)lot.GetType().GetProperty("Id").GetValue(lot),
+                    OperationId = (int)ope.GetType().GetProperty("Id").GetValue(ope),
+                    Total = int.Parse(tbCant.Text)
+                };
+                var result = l_Record.TryUpdate(candidate);
+                if (!result.IsSuccess)
+                {
+                    MessageBox.Show(Logic.RecordWriteMessages.Describe(result), "No se pudo guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
                 MessageBox.Show("Registro actualizado con éxito.", "Atención");
                 grid.GetRecord();
@@ -163,7 +171,7 @@ namespace Presentation.Views
             }
             catch (Exception)
             {
-                MessageBox.Show("Falla en el registro.", "Atención");
+                MessageBox.Show("No se pudo actualizar el registro por un error técnico. Actualice los datos antes de volver a intentar.", "Atención");
             }
         }
 

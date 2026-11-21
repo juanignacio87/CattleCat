@@ -56,6 +56,7 @@
     <Compile Include="L_Lot.cs" />
     <Compile Include="L_Operation.cs" />
     <Compile Include="L_Record.cs" />
+    <Compile Include="RecordWriteMessages.cs" />
     <Compile Include="L_User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -64,6 +65,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CattleCat.Domain\CattleCat.Domain.csproj">
+      <Project>{F255820A-3EDD-4F63-9DB8-D5B0991B1C11}</Project>
+      <Name>CattleCat.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Dalc\Dalc.csproj">
       <Project>{2745be73-a4f5-4d0a-8b38-814a040da311}</Project>
       <Name>Dalc</Name>

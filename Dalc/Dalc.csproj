@@ -56,6 +56,10 @@
     <Compile Include="D_Lot.cs" />
     <Compile Include="D_Operation.cs" />
     <Compile Include="D_Record.cs" />
+    <Compile Include="RecordWriting\IRecordWriteSession.cs" />
+    <Compile Include="RecordWriting\EfRecordWriteSession.cs" />
+    <Compile Include="RecordWriting\RecordWriter.cs" />
+    <Compile Include="RecordWriting\RecordWriteException.cs" />
     <Compile Include="D_User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

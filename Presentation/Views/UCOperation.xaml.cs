@@ -59,16 +59,12 @@ namespace Presentation.Views
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (!Validate())
-            {
-                return;
-            }
-
-            // Evita varios clics mientras se guarda.
+            // Evita varios clics mientras se valida y guarda.
             btnAdd.IsEnabled = false;
 
             try
             {
+                if (!Validate()) return;
                 int userId = Convert.ToInt32(cbUsuario.SelectedValue);
 
                 int categoryId = Convert.ToInt32(cbCategoria.SelectedValue);
@@ -96,7 +92,12 @@ namespace Presentation.Views
                 Logic.L_Record recordLogic = new Logic.L_Record();
 
                 // Todas las operaciones se guardan juntas.
-                recordLogic.LRecords(records);
+                var result = recordLogic.TryCreateMany(records);
+                if (!result.IsSuccess)
+                {
+                    MessageBox.Show(Logic.RecordWriteMessages.Describe(result), "No se pudo guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
                 /*
                  * Limpiar el formulario solamente después
@@ -125,15 +126,14 @@ namespace Presentation.Views
 
                 MessageBox.Show("Operación agregada con éxito.", "Registro completado", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 /*
                  * Si falla la transacción, no se limpia el formulario,
                  * permitiendo revisar o volver a intentar.
                  */
                 MessageBox.Show(
-                    $"No se pudo completar el registro.{Environment.NewLine}" +
-                    $"{ex.Message}",
+                    "No se pudo completar el registro por un error técnico. Actualice los datos antes de volver a intentar.",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);

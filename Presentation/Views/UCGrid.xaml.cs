@@ -307,10 +307,10 @@ namespace Presentation.Views
 
                 frame.Navigate(new EditOp(recordId));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show(
-                    $"No se pudo abrir el registro para editar.{Environment.NewLine}{ex.Message}",
+                    "No se pudo abrir el registro para editar por un error técnico.",
                     "Error");
             }
         }
@@ -366,11 +366,11 @@ namespace Presentation.Views
                     return;
                 }
 
-                bool deleted = recordLogic.Delete(recordId);
+                var result = recordLogic.TryDeactivate(recordId);
 
-                if (!deleted)
+                if (!result.IsSuccess)
                 {
-                    MessageBox.Show("El registro no pudo eliminarse porque cambió su estado o afectaría el stock.", "No se pudo eliminar",
+                    MessageBox.Show(Logic.RecordWriteMessages.Describe(result), "No se pudo eliminar",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
 
                     return;
@@ -380,9 +380,9 @@ namespace Presentation.Views
 
                 MessageBox.Show("Registro eliminado correctamente.", "Eliminación completada", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"No se pudo eliminar el registro.{Environment.NewLine}{ex.Message}","Error",MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("No se pudo eliminar el registro por un error técnico. Actualice los datos antes de volver a intentar.","Error",MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         #endregion

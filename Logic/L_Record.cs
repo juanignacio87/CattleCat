@@ -1,4 +1,5 @@
-﻿using Dalc;
+﻿using CattleCat.Domain.Records;
+using Dalc;
 using Entities;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,11 @@ namespace Logic
     public class L_Record
     {
         private readonly D_Record dRecord = new D_Record();
+
+        public RecordWriteResult TryCreate(Record record) => dRecord.TryCreate(record);
+        public RecordWriteResult TryCreateMany(IEnumerable<Record> records) => dRecord.TryCreateMany(records);
+        public RecordWriteResult TryUpdate(Record record) => dRecord.TryUpdate(record);
+        public RecordWriteResult TryDeactivate(int id) => dRecord.TryDeactivate(id);
 
         #region CREATE
 

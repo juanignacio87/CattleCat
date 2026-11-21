@@ -1,4 +1,7 @@
-﻿using CattleCat.Compatibility;
+﻿using System.Data.Entity;
+using CattleCat.Domain.Records;
+using Dalc.RecordWriting;
+using CattleCat.Compatibility;
 using CattleCat.Domain.Stock;
 using Entities;
 using System;
@@ -17,43 +20,19 @@ namespace Dalc
         /// <summary>
         /// 
         /// </summary>
-        public void d_Record(Entities.Record record)
+        private readonly RecordWriter writer = new RecordWriter(() => new EfRecordWriteSession());
+
+        public RecordWriteResult TryCreate(Record record) => writer.Create(record);
+        public RecordWriteResult TryCreateMany(IEnumerable<Record> records) => writer.CreateMany(records);
+        public RecordWriteResult TryUpdate(Record record) => writer.Update(record);
+        public RecordWriteResult TryDeactivate(int id) => writer.Deactivate(id);
+
+        public void d_Record(Record record) => RequireSuccess(TryCreate(record));
+        public void AddRecords(IEnumerable<Record> records) => RequireSuccess(TryCreateMany(records));
+
+        private static void RequireSuccess(RecordWriteResult result)
         {
-            record.Activo = 1;
-
-            db.Records.Add(record);
-            db.SaveChanges();
-        }
-
-        public void AddRecords(IEnumerable<Entities.Record> records)
-        {
-            List<Entities.Record> recordList = records.ToList();
-
-            if (recordList.Count == 0)
-            {
-                return;
-            }
-
-            foreach (Entities.Record record in recordList)
-            {
-                record.Activo = 1;
-            }
-
-            using (var transaction = db.Database.BeginTransaction())
-            {
-                try
-                {
-                    db.Records.AddRange(recordList);
-                    db.SaveChanges();
-
-                    transaction.Commit();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
+            if (!result.IsSuccess) throw new RecordWriteException(result);
         }
 
         #endregion
@@ -115,7 +94,7 @@ namespace Dalc
         /// <returns>Each operation with date, user, lot, farm and categories</returns>
         public Record GetRecordToEdit(int id)
         {
-            return db.Records.FirstOrDefault(r => r.Id == id && r.Activo == 1);
+            return db.Records.AsNoTracking().FirstOrDefault(r => r.Id == id && r.Activo == 1);
         }
 
         public (bool isValid, DateTime? conflictDate, int projectedStock) ValidateStockTimeline(int lotId, int categoryId, DateTime newDate, int newEffect, int? excludedRecordId = null)
@@ -343,17 +322,7 @@ namespace Dalc
         /// Last Update: 13/11/23
         /// </summary>
         /// <param name="id"></param>
-        public void UpdateOne(Entities.Record record)
-        {
-            Entities.Record uprecord = db.Records.Find(record.Id);
-            uprecord.Date = record.Date;
-            uprecord.Total = record.Total;
-            uprecord.UserId = record.UserId;
-            uprecord.LotId = record.LotId;
-            uprecord.CategoryId = record.CategoryId;
-            uprecord.OperationId = record.OperationId;
-            db.SaveChanges();
-        }
+        public void UpdateOne(Record record) => RequireSuccess(TryUpdate(record));
 
         #endregion
         #region DELETE
@@ -367,26 +336,9 @@ namespace Dalc
         /// 
         public bool Delete(int id)
         {
-            var validation = CanDeactivateRecord(id);
-
-            if (!validation.canDelete)
-            {
-                return false;
-            }
-
-            Entities.Record record = db.Records.FirstOrDefault(r =>
-                r.Id == id &&
-                r.Activo == 1);
-
-            if (record == null)
-            {
-                return false;
-            }
-
-            record.Activo = 0;
-            db.SaveChanges();
-
-            return true;
+            var result = TryDeactivate(id);
+            if (result.Status == RecordWriteStatus.TechnicalError) throw new RecordWriteException(result);
+            return result.IsSuccess;
         }
 
         #endregion
