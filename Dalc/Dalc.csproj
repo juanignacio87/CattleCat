@@ -38,7 +38,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="[6.4.4]" />
+    <PackageReference Include="EntityFramework" Version="[6.5.2]" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CattleCat.Domain\CattleCat.Domain.csproj" />
