@@ -343,22 +343,6 @@ namespace Presentation.Views
 
                 Logic.L_Record recordLogic = new Logic.L_Record();
 
-                var validation = recordLogic.CanDeactivateRecord(recordId);
-
-                if (!validation.canDelete)
-                {
-                    if (validation.conflictDate.HasValue)
-                    {
-                        MessageBox.Show($"No se puede eliminar este registro porque provocaría " + $"un stock negativo posteriormente.\n\n" + $"Fecha del conflicto: " + $"{validation.conflictDate.Value:dd/MM/yyyy}\n" + $"Stock proyectado: {validation.projectedStock}", "No se puede eliminar", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                    else
-                    {
-                        MessageBox.Show("El registro no existe, ya fue eliminado o no está disponible.", "No se puede eliminar", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-
-                    return;
-                }
-
                 MessageBoxResult confirmation = MessageBox.Show("¿Está seguro de que desea eliminar el registro?", "Confirmar eliminación", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (confirmation != MessageBoxResult.Yes)
@@ -370,7 +354,7 @@ namespace Presentation.Views
 
                 if (!result.IsSuccess)
                 {
-                    MessageBox.Show(Logic.RecordWriteMessages.Describe(result), "No se pudo eliminar",
+                    MessageBox.Show(recordLogic.DescribeWriteResult(result), "No se pudo eliminar",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
 
                     return;

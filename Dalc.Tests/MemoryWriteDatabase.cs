@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace Dalc.Tests
         public readonly Dictionary<int, Lot> Lots = new Dictionary<int, Lot> { [1] = new Lot { Id = 1, FarmId = 1, Active = 1 }, [2] = new Lot { Id = 2, FarmId = 1, Active = 1 } };
         public readonly Dictionary<int, Farm> Farms = new Dictionary<int, Farm> { [1] = new Farm { Id = 1, Activo = 1 } };
         public readonly HashSet<int> Categories = new HashSet<int> { 1, 2 };
-        public readonly HashSet<int> Operations = new HashSet<int> { 1, 5, 8, 11, 12, 14, 999 };
+        public readonly HashSet<int> Operations = new HashSet<int>(Enumerable.Range(1, 18).Concat(new[] { 999 }));
         public readonly List<string> Events = new List<string>();
         public string FailAt;
         public IsolationLevel? Isolation;

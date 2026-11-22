@@ -1,19 +1,21 @@
-using System;
-
+﻿using System;
 namespace CattleCat.Domain.Stock
 {
     public sealed class StockTimelineResult
     {
-        internal StockTimelineResult(bool isValid, DateTime? conflictDate, int projectedStock)
+        internal StockTimelineResult(bool isValid, DateTime? conflictDate, int projectedStock,
+            StockTimelineConflict conflict = StockTimelineConflict.None, int? operationId = null,
+            int? requestedQuantity = null, int? availableStock = null)
         {
-            IsValid = isValid;
-            ConflictDate = conflictDate;
-            ProjectedStock = projectedStock;
+            IsValid = isValid; ConflictDate = conflictDate; ProjectedStock = projectedStock;
+            Conflict = conflict; OperationId = operationId; RequestedQuantity = requestedQuantity; AvailableStock = availableStock;
         }
-
         public bool IsValid { get; }
         public DateTime? ConflictDate { get; }
-        /// <summary>Balance at the first conflict, or final balance when valid.</summary>
         public int ProjectedStock { get; }
+        public StockTimelineConflict Conflict { get; }
+        public int? OperationId { get; }
+        public int? RequestedQuantity { get; }
+        public int? AvailableStock { get; }
     }
 }

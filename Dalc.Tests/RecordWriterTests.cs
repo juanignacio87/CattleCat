@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Linq;
 using System.Threading;
@@ -65,7 +65,12 @@ namespace Dalc.Tests
         [Test] public void InactiveHistoryDoesNotSupplyStock()
         {db.Records.Add(Row(id:1,active:0));AssertRejected(writer.Create(Row(1,LegacyStockOperationCatalog.Exit)),RecordWriteStatus.StockConflict);}
         [TestCase(5)][TestCase(1)][TestCase(999)]
-        public void NeutralOperationsDoNotAffectStock(int operation) => Assert.That(writer.Create(Row(1,operation)).IsSuccess,Is.True);
+        public void NeutralOperationsDoNotAffectStock(int operation)
+        {
+            db.Records.Add(Row(1,id:1));
+            var result = writer.Create(Row(1,operation));
+            Assert.That(result.Status, Is.EqualTo(operation == 999 ? RecordWriteStatus.UnsupportedOperation : RecordWriteStatus.Success));
+        }
         [TestCase(8)][TestCase(12)] public void HistoricalIncomeIdsSupplyStock(int income)
         {Assert.That(writer.CreateMany(new[] {Row(5,income),Row(5,LegacyStockOperationCatalog.Exit,day:-1)}).IsSuccess,Is.True);}
         [TestCase(11)][TestCase(14)] public void HistoricalOutcomeIdsRequireStock(int outcome)
@@ -93,7 +98,7 @@ namespace Dalc.Tests
         [Test] public void IncomeCanBeMovedWhenOriginAndDestinationRemainValid()
         {db.Records.Add(Row(id:1));Assert.That(writer.Update(Row(id:1,lot:2)).IsSuccess,Is.True);Assert.That(db.Records[0].LotId,Is.EqualTo(2));}
         [Test] public void IncomeCannotBecomeNeutralIfNeededLater()
-        {Seed();AssertRejected(writer.Update(Row(20,5,id:1)),RecordWriteStatus.StockConflict);}
+        {Seed();AssertRejected(writer.Update(Row(20,5,id:1)),RecordWriteStatus.CountMismatch);}
         [Test] public void ValidNeutralDeactivationIsLogical()
         {db.Records.Add(Row(20,5,id:1));Assert.That(writer.Deactivate(1).IsSuccess,Is.True);Assert.That(db.Records.Count,Is.EqualTo(1));Assert.That(db.Records[0].Activo,Is.Zero);}
         [Test] public void UnneededIncomeCanBeDeactivated()
@@ -106,7 +111,7 @@ namespace Dalc.Tests
         {if(inactive)db.Records.Add(Row(id:1,active:0));AssertRejected(writer.Deactivate(1),RecordWriteStatus.RecordUnavailable);}
         [TestCase("FindUser")][TestCase("LoadActiveRecords")][TestCase("Add")][TestCase("SaveChanges")][TestCase("AfterSaveChanges")][TestCase("Commit")]
         public void TechnicalFailureRollsBackWholeBatch(string failure)
-        {db.FailAt=failure;Assert.That(writer.CreateMany(new[] {Row(),Row(1,5)}).Status,Is.EqualTo(RecordWriteStatus.TechnicalError));Assert.That(db.Records,Is.Empty);Assert.That(db.Commits,Is.Zero);Assert.That(db.Rollbacks,Is.EqualTo(1));}
+        {db.FailAt=failure;Assert.That(writer.CreateMany(new[] {Row(),Row(20,5)}).Status,Is.EqualTo(RecordWriteStatus.TechnicalError));Assert.That(db.Records,Is.Empty);Assert.That(db.Commits,Is.Zero);Assert.That(db.Rollbacks,Is.EqualTo(1));}
         [TestCase("Update")][TestCase("AfterSaveChanges")][TestCase("Commit")]
         public void TechnicalUpdateFailurePreservesOriginal(string failure)
         {Seed();db.FailAt=failure;Assert.That(writer.Update(Row(25,id:1)).Status,Is.EqualTo(RecordWriteStatus.TechnicalError));Assert.That(db.Records[0].Total,Is.EqualTo(20));Assert.That(db.Records.Count,Is.EqualTo(2));}

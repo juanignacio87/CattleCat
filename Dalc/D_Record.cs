@@ -97,6 +97,22 @@ namespace Dalc
             return db.Records.AsNoTracking().FirstOrDefault(r => r.Id == id && r.Activo == 1);
         }
 
+        // Read-only labels for the actual conflict group, not the current UI selection.
+        // Reuse the existing read context and tracked entities; never mutate or save here.
+        public string GetLotName(int id)
+        {
+            var loaded = db.Lots.Local.FirstOrDefault(l => l.Id == id);
+            return loaded != null ? loaded.LotName :
+                db.Lots.AsNoTracking().Where(l => l.Id == id).Select(l => l.LotName).FirstOrDefault();
+        }
+
+        public string GetCategoryName(int id)
+        {
+            var loaded = db.Categories.Local.FirstOrDefault(c => c.Id == id);
+            return loaded != null ? loaded.CategoryName :
+                db.Categories.AsNoTracking().Where(c => c.Id == id).Select(c => c.CategoryName).FirstOrDefault();
+        }
+
         public (bool isValid, DateTime? conflictDate, int projectedStock) ValidateStockTimeline(int lotId, int categoryId, DateTime newDate, int newEffect, int? excludedRecordId = null)
         {
             Entities.Record originalRecord = null;

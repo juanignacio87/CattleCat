@@ -16,6 +16,12 @@ namespace Logic
         public RecordWriteResult TryUpdate(Record record) => dRecord.TryUpdate(record);
         public RecordWriteResult TryDeactivate(int id) => dRecord.TryDeactivate(id);
 
+        public string DescribeWriteResult(RecordWriteResult result)
+        {
+            var context = RecordWriteMessageContext.Resolve(result, dRecord.GetLotName, dRecord.GetCategoryName);
+            return RecordWriteMessages.Describe(result, context);
+        }
+
         #region CREATE
 
         public void LRecord(Record record)

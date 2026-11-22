@@ -95,7 +95,7 @@ namespace Presentation.Views
                 var result = recordLogic.TryCreateMany(records);
                 if (!result.IsSuccess)
                 {
-                    MessageBox.Show(Logic.RecordWriteMessages.Describe(result), "No se pudo guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(recordLogic.DescribeWriteResult(result), "No se pudo guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -207,24 +207,24 @@ namespace Presentation.Views
         #region OPERATIONS
 
         #region CONSTANTES OPERACIONES
-        public const int const_aftosa = 1;
-        public const int const_antiparasitario = 2;
-        public const int const_brucelosis = 3;
-        public const int const_castraccion = 4;
-        public const int const_conteo = 5;
-        public const int const_destete = 6;
-        public const int const_ecografia = 7;
+        public const int const_aftosa = LegacyStockOperationCatalog.FootAndMouth;
+        public const int const_antiparasitario = LegacyStockOperationCatalog.Antiparasitic;
+        public const int const_brucelosis = LegacyStockOperationCatalog.Brucellosis;
+        public const int const_castraccion = LegacyStockOperationCatalog.Castration;
+        public const int const_conteo = LegacyStockOperationCatalog.Count;
+        public const int const_destete = LegacyStockOperationCatalog.Weaning;
+        public const int const_ecografia = LegacyStockOperationCatalog.Ultrasound;
         public const int const_entrada = LegacyStockOperationCatalog.Entry;
-        public const int const_inseminacion = 9;
-        public const int const_ir9 = 10;
+        public const int const_inseminacion = LegacyStockOperationCatalog.Insemination;
+        public const int const_ir9 = LegacyStockOperationCatalog.Ir9;
         public const int const_muerte = LegacyStockOperationCatalog.Death;
         public const int const_nacimiento = LegacyStockOperationCatalog.Birth;
-        public const int const_reproductiva = 13;
+        public const int const_reproductiva = LegacyStockOperationCatalog.Reproductive;
         public const int const_salida = LegacyStockOperationCatalog.Exit;
-        public const int const_querato = 15;
-        public const int const_sarna = 16;
-        public const int const_diarreico = 17;
-        public const int const_carb = 18;
+        public const int const_querato = LegacyStockOperationCatalog.Keratitis;
+        public const int const_sarna = LegacyStockOperationCatalog.Scabies;
+        public const int const_diarreico = LegacyStockOperationCatalog.Antidiarrheal;
+        public const int const_carb = LegacyStockOperationCatalog.Carbuncle;
         #endregion
         #region CHECKED EVENTS
         private void chbAftosa_Checked(object sender, RoutedEventArgs e)
@@ -478,98 +478,7 @@ namespace Presentation.Views
                 return false;
             }
 
-            Logic.L_Record recordLogic = new Logic.L_Record();
-
-            int stockActual = recordLogic.GetStock(selectedLot.Id, selectedCategory.Id, dpDate.SelectedDate.Value);
-
-            // Cantidad de movimientos seleccionados que suman stock.
-            int movimientosPositivos = checkBoxes.Count(operationId => LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Positive);
-
-            // Cantidad de movimientos seleccionados que restan stock.
-            int movimientosNegativos = checkBoxes.Count(operationId => LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Negative);
-
-            /*
-             * Las operaciones que no son movimientos ni conteos
-             * requieren animales existentes en el lote y categoría.
-             */
-            bool hasLivestockOperation = checkBoxes.Any(operationId => LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Neutral && operationId != const_conteo);
-
-            /*
-             * Si en el mismo registro existe una entrada o nacimiento,
-             * esos animales quedan disponibles para las operaciones
-             * sanitarias seleccionadas simultáneamente.
-             */
-            int stockAvailableForOperations = stockActual + (cantidad * movimientosPositivos);
-
-            if (hasLivestockOperation && stockAvailableForOperations <= 0)
-            {
-                MessageBox.Show("No se puede registrar esta operación porque no hay animales en el lote, de la categoría seleccionada.", "Lote sin stock", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            if (hasLivestockOperation && cantidad > stockAvailableForOperations)
-            {
-                MessageBox.Show( $"La cantidad indicada supera el stock disponible.\n\n" + $"Stock disponible: {stockAvailableForOperations}\n" + $"Cantidad de la operación: {cantidad}", "Cantidad superior al stock", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            int efectoNuevo = (cantidad * movimientosPositivos) - (cantidad * movimientosNegativos);
-
-            var timelineValidation = recordLogic.ValidateStockTimeline(selectedLot.Id, selectedCategory.Id, dpDate.SelectedDate.Value, efectoNuevo);
-
-            if (!timelineValidation.isValid)
-            {
-                MessageBox.Show($"No se puede guardar el registro porque provocaría " + $"un stock negativo posteriormente.\n\n" +
-                    $"Fecha del conflicto: " + $"{timelineValidation.conflictDate.Value:dd/MM/yyyy}\n" + $"Stock proyectado: " +
-                    $"{timelineValidation.projectedStock}", "Cronología de stock inválida", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            int stockProyectado = stockActual + (cantidad * movimientosPositivos) - (cantidad * movimientosNegativos);
-
-            if (stockProyectado < 0)
-            {
-                int animalesDisponibles = stockActual + (cantidad * movimientosPositivos);
-                int animalesARestar = cantidad * movimientosNegativos;
-
-                MessageBox.Show(
-                    $"No se puede completar el registro porque el stock quedaría negativo.\n\n" +
-                    $"Stock disponible: {animalesDisponibles}\n" +
-                    $"Cantidad a descontar: {animalesARestar}\n" +
-                    $"Stock resultante: {stockProyectado}",
-                    "Stock insuficiente",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            if (checkBoxes.Contains(const_conteo))
-            {
-                int diferencia = cantidad - stockProyectado;
-
-                if (diferencia != 0)
-                {
-                    MessageBoxResult result = MessageBox.Show(
-                        $"El conteo no coincide con el stock registrado.\n\n" +
-                        $"Stock anterior: {stockActual}\n" +
-                        $"Stock esperado después de los movimientos: {stockProyectado}\n" +
-                        $"Cantidad contada: {cantidad}\n" +
-                        $"Diferencia: {diferencia:+#;-#;0}\n\n" +
-                        $"¿Desea guardar igualmente el conteo?",
-                        "Diferencia de stock",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    if (result == MessageBoxResult.No)
-                    {
-                        return false;
-                    }
-                }
-            }
+            // La cronología completa se valida al guardar mediante RecordWriter.
 
             // Brucelosis: Toros, Vacas Cría y Vaquillonas Cría.
             if (checkBoxes.Contains(const_brucelosis) && categoryId != 3 && categoryId != 4 && categoryId != 5)

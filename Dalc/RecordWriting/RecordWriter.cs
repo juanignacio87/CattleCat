@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -62,12 +62,8 @@ namespace Dalc.RecordWriting
             if (original == null || original.Activo != 1) return Fail(RecordWriteStatus.RecordUnavailable);
             var validation = Validate(session, original);
             if (!validation.IsSuccess) return validation;
-            // Removing an exit or neutral operation cannot reduce stock.
-            if (LegacyStockOperationCatalog.Classify(original.OperationId) == StockEffect.Positive)
-            {
-                var timeline = ValidateTimelines(session, new Record[0], original);
-                if (!timeline.IsSuccess) return timeline;
-            }
+            var timeline = ValidateTimelines(session, new Record[0], original);
+            if (!timeline.IsSuccess) return timeline;
             session.Deactivate(id);
             return RecordWriteResult.Success();
         });
@@ -97,6 +93,7 @@ namespace Dalc.RecordWriting
         private RecordWriteResult Validate(IRecordWriteSession session, Record record)
         {
             if (record.Total <= 0) return Fail(RecordWriteStatus.InvalidQuantity);
+            if (record.Date.Date == DateTime.MinValue) return Fail(RecordWriteStatus.InvalidRequest);
             if (record.Date.Date > today().Date) return Fail(RecordWriteStatus.FutureDate);
             var user = session.FindUser(record.UserId);
             if (user == null) return Fail(RecordWriteStatus.UserNotFound);
@@ -109,6 +106,8 @@ namespace Dalc.RecordWriting
             if (farm.Activo != 1) return Fail(RecordWriteStatus.FarmInactive);
             if (!session.CategoryExists(record.CategoryId)) return Fail(RecordWriteStatus.CategoryNotFound);
             if (!session.OperationExists(record.OperationId)) return Fail(RecordWriteStatus.OperationNotFound);
+            if (LegacyStockOperationCatalog.Behavior(record.OperationId) == StockOperationBehavior.Unknown)
+                return Fail(RecordWriteStatus.UnsupportedOperation);
             return RecordWriteResult.Success();
         }
 
@@ -123,12 +122,22 @@ namespace Dalc.RecordWriting
             {
                 var history = session.LoadActiveRecords(group.LotId, group.CategoryId)
                     .Where(r => r.Activo == 1 && (original == null || r.Id != original.Id));
-                var proposed = history.Concat(candidates.Where(r => r.LotId == group.LotId && r.CategoryId == group.CategoryId));
+                var proposed = history.Concat(candidates.Where(r => r.LotId == group.LotId && r.CategoryId == group.CategoryId)).ToList();
+                if (proposed.Any(r => r.Total <= 0)) return Fail(RecordWriteStatus.InvalidQuantity);
+                if (proposed.Any(r => r.Date.Date == DateTime.MinValue)) return Fail(RecordWriteStatus.InvalidRequest);
+                if (proposed.Any(r => LegacyStockOperationCatalog.Behavior(r.OperationId) == StockOperationBehavior.Unknown))
+                    return Fail(RecordWriteStatus.UnsupportedOperation);
                 var movements = proposed.Select(r => new StockMovement(r.Date, r.Total, r.Activo == 1,
-                    LegacyStockOperationCatalog.Classify(r.OperationId)));
-                var result = StockTimeline.Evaluate(movements);
+                    LegacyStockOperationCatalog.Behavior(r.OperationId), r.OperationId));
+                StockTimelineResult result;
+                try { result = StockTimeline.Evaluate(movements); }
+                catch (OverflowException) { return Fail(RecordWriteStatus.InvalidQuantity); }
                 if (!result.IsValid && (firstConflict == null || result.ConflictDate < firstConflict.ConflictDate))
-                    firstConflict = RecordWriteResult.Conflict(result.ConflictDate.Value, result.ProjectedStock);
+                {
+                    var changedDates = candidates.Select(r => r.Date).ToList();
+                    if (original != null) changedDates.Add(original.Date);
+                    firstConflict = RecordWriteResult.TimelineConflict(result, group.LotId, group.CategoryId, changedDates.Min());
+                }
             }
             return firstConflict ?? RecordWriteResult.Success();
         }

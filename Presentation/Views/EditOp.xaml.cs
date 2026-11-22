@@ -161,7 +161,7 @@ namespace Presentation.Views
                 var result = l_Record.TryUpdate(candidate);
                 if (!result.IsSuccess)
                 {
-                    MessageBox.Show(Logic.RecordWriteMessages.Describe(result), "No se pudo guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(l_Record.DescribeWriteResult(result), "No se pudo guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -343,7 +343,6 @@ namespace Presentation.Views
 
             int operationId = selectedOperation.Id;
             int categoryId = selectedCategory.Id;
-            DateTime fecha = dpDate.SelectedDate.Value;
 
             // Brucelosis: Toros, Vacas Cría y Vaquillonas Cría.
             if (operationId == 3 && categoryId != 3 && categoryId != 4 && categoryId != 5)
@@ -393,115 +392,7 @@ namespace Presentation.Views
                 return false;
             }
 
-            /*
-             * Calculamos el stock sin contar el registro que se está editando.
-             */
-            int stockSinRegistro = l_Record.GetStock(selectedLot.Id, selectedCategory.Id, fecha, rec.Id);
-
-            int efectoNuevo = LegacyStockOperationCatalog.SignedQuantity(operationId, cantidad);
-
-            bool isPositiveMovement = LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Positive;
-
-            bool isNegativeMovement = LegacyStockOperationCatalog.Classify(operationId) == StockEffect.Negative;
-
-            bool isCount = operationId == 5;     // Conteo
-
-            bool requiresExistingStock = !isPositiveMovement && !isNegativeMovement && !isCount;
-
-            if (requiresExistingStock && stockSinRegistro <= 0)
-            {
-                MessageBox.Show(
-                    "No se puede registrar esta operación porque no hay animales " +
-                    "en el lote y categoría seleccionados para esa fecha.",
-                    "Lote sin stock",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            if (requiresExistingStock && cantidad > stockSinRegistro)
-            {
-                MessageBox.Show(
-                    $"La cantidad indicada supera el stock disponible.\n\n" +
-                    $"Stock disponible: {stockSinRegistro}\n" +
-                    $"Cantidad de la operación: {cantidad}",
-                    "Cantidad superior al stock",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            int stockProyectado = stockSinRegistro + efectoNuevo;
-
-            // Validación inmediata.
-            if (stockProyectado < 0)
-            {
-                MessageBox.Show( $"No se puede actualizar el registro porque el stock quedaría negativo.\n\n" + $"Stock disponible: {stockSinRegistro}\n" + $"Efecto del nuevo movimiento: {efectoNuevo:+#;-#;0}\n" + $"Stock resultante: {stockProyectado}", "Stock insuficiente", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            /*
-             * Si cambia de lote o categoría, se comprueba que retirar
-             * el registro de su lugar original no rompa ese historial.
-             */
-            bool changesStockGroup = rec.LotId != selectedLot.Id || rec.CategoryId != selectedCategory.Id;
-
-            if (changesStockGroup)
-            {
-                var originValidation = l_Record.CanDeactivateRecord(rec.Id);
-
-                if (!originValidation.canDelete)
-                {
-                    string conflictDate = originValidation.conflictDate.HasValue ? originValidation.conflictDate.Value.ToString("dd/MM/yyyy") : "No disponible";
-
-                    MessageBox.Show($"No se puede mover este registro porque al retirarlo " + $"de su lote o categoría original el stock quedaría negativo.\n\n" + $"Fecha del conflicto: {conflictDate}\n" + $"Stock proyectado: {originValidation.projectedStock}", "Stock de origen insuficiente", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                    return false;
-                }
-            }
-
-            /*
-             * Se simula toda la cronología del nuevo lote y categoría,
-             * excluyendo la versión anterior del registro.
-             */
-            var timelineValidation = l_Record.ValidateStockTimeline(selectedLot.Id, selectedCategory.Id, fecha, efectoNuevo, rec.Id);
-
-            if (!timelineValidation.isValid)
-            {
-                string conflictDate = timelineValidation.conflictDate.HasValue ? timelineValidation.conflictDate.Value.ToString("dd/MM/yyyy") : "No disponible";
-
-                MessageBox.Show($"No se puede actualizar el registro porque provocaría " + $"un stock negativo posteriormente.\n\n" +
-                    $"Fecha del conflicto: {conflictDate}\n" + $"Stock proyectado: {timelineValidation.projectedStock}", "Cronología de stock inválida", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                return false;
-            }
-
-            // Conteo: compara, pero no modifica el stock.
-            if (operationId == 5)
-            {
-                int diferencia = cantidad - stockSinRegistro;
-
-                if (diferencia != 0)
-                {
-                    MessageBoxResult result = MessageBox.Show(
-                        $"El conteo no coincide con el stock registrado.\n\n" +
-                        $"Stock esperado: {stockSinRegistro}\n" +
-                        $"Cantidad contada: {cantidad}\n" +
-                        $"Diferencia: {diferencia:+#;-#;0}\n\n" +
-                        $"¿Desea guardar igualmente el conteo?",
-                        "Diferencia de stock",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    if (result == MessageBoxResult.No)
-                    {
-                        return false;
-                    }
-                }
-            }
+            // RecordWriter valida origen, destino y cronología dentro de la transacción.
 
             return true;
         }
